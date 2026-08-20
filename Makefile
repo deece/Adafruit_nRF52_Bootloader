@@ -8,7 +8,7 @@
 # - SIGNED_FW          : if bootloader will ONLY accept signed firmware
 # - SIGNED_FW_QX       : Qx for signed firmware verification
 # - SIGNED_FW_QY       : Qy for signed firmware verification
-# - DUALBANK_FW        : If bootloader will implement a dual bank feature to allow autorecover from failed
+# - DUALBANK_FW        : Enable dual bank firmware support (DFU and application-assisted OTA)
 # - FORCE_UF2          : if SIGNED_FW is 1, will force to include UF2 support (UNSECURE, UF2 does NOT validate signature!)
 # - DEFAULT_TO_OTA_DFU : if entering DFU, by default enter OTA DFU instead of Serial DFU
 #------------------------------------------------------------------------------
@@ -191,7 +191,7 @@ C_SRC += $(SDK11_PATH)/libraries/bootloader_dfu/bootloader_util.c
 C_SRC += $(SDK11_PATH)/libraries/bootloader_dfu/dfu_transport_serial.c
 C_SRC += $(SDK11_PATH)/libraries/bootloader_dfu/dfu_transport_ble.c
 ifeq ($(DUALBANK_FW), 1)
-C_SRC += $(SDK11_PATH)/libraries/bootloader_dfu/dfu_dual_bank.c
+C_SRC += $(SDK11_PATH)/libraries/bootloader_dfu/dfu_dual_bank.c src/dual_bank.c
 else
 C_SRC += $(SDK11_PATH)/libraries/bootloader_dfu/dfu_single_bank.c
 endif
@@ -261,6 +261,7 @@ IPATH += \
   src/boards/$(BOARD) \
   src/cmsis/include \
   src/usb \
+  user_app \
   $(TUSB_PATH)
 
 ifeq ($(SIGNED_FW), 1)
@@ -374,6 +375,10 @@ endif
 
 ifeq ($(DEFAULT_TO_OTA_DFU), 1)
 CFLAGS += -DDEFAULT_TO_OTA_DFU
+endif
+
+ifeq ($(DUALBANK_FW), 1)
+CFLAGS += -DDUALBANK_FW=1
 endif
 
 # Extract semantic version numbers (MAJOR.MINOR.PATCH) from GIT_VERSION.
