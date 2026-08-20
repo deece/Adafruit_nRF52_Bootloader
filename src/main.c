@@ -47,6 +47,7 @@
 #include "bootloader.h"
 #include "bootloader_util.h"
 #include "crash_handler.h"
+#include "dual_bank.h"
 
 #include "nrf.h"
 #include "nrf_soc.h"
@@ -179,6 +180,9 @@ int main(void) {
   bootloader_init();
   PRINTF("Bootloader Start\r\n");
   led_state(STATE_BOOTLOADER_STARTED);
+
+  /* Check and apply pending dual-bank OTA firmware update */
+  dual_bank_check_and_apply_update();
 
   // When updating SoftDevice, bootloader will reset before swapping SD
   if (bootloader_dfu_sd_in_progress()) {

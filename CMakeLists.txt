@@ -30,7 +30,7 @@ set(TCRYPT_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/tinycrypt/lib)
 
 option(DEFAULT_TO_OTA_DFU "Default to OTA DFU instead of Serial DFU" OFF)
 option(SIGNED_FW "Enable signed firmware verification" OFF)
-option(DUALBANK_FW "Enable dual bank DFU support" OFF)
+option(DUALBANK_FW "Enable dual bank firmware support (DFU and application-assisted OTA)" OFF)
 option(FORCE_UF2 "Force UF2 support even with SIGNED_FW" OFF)
 set(SIGNED_FW_QX "" CACHE STRING "Public key Qx (comma-separated bytes)")
 set(SIGNED_FW_QY "" CACHE STRING "Public key Qy (comma-separated bytes)")
@@ -86,6 +86,10 @@ add_executable(bootloader
 if (DUALBANK_FW)
   target_sources(bootloader PUBLIC
     ${SDK11_DIR}/libraries/bootloader_dfu/dfu_dual_bank.c
+    src/dual_bank.c
+  )
+  target_compile_definitions(bootloader PUBLIC
+    DUALBANK_FW=1
   )
 else ()
   target_sources(bootloader PUBLIC

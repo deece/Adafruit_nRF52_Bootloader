@@ -228,8 +228,8 @@ make BOARD=feather_nrf52840_express flash-mbr
 
 ### Dual bank firmware support:
 
-This bootloader can split the FLASH memory into 2 partitions, one for the last successfully uploaded firmware, and the other for the new firmware that is being uploaded. In case the firmware upload fails, the bootloader will revert to the last working firmware version. The only drawback is that the maximum firmware size is half of the device FLASH size: That is why it is disabled by default.
-You can enable this feature by passing DUALBANK_FW=1 to the make process while compiling the bootloader
+This bootloader can split the FLASH memory into 2 partitions, one for the active firmware (Bank 0), and the other for staging new firmware (Bank 1). This supports both interactive DFU updates (reverting to the previous version if an upload fails) and application-assisted background OTA upgrades (e.g. via Zigbee, cellular, or custom protocol staged by the running application). The only drawback is that the maximum firmware size is approximately half of the device FLASH size; that is why it is disabled by default.
+You can enable this feature by passing `DUALBANK_FW=1` to the make/cmake process while compiling the bootloader. See [`user_app/README.md`](user_app/README.md) for application OTA integration.
 
 ### Signed firmware support:
 This bootloader can validate that the uploaded firmware is digitally signed, and refuse to install unsigned or signed with the improper key firmware. Because this will make Arduino uploads stop working (because they are not digitally signed), this feature is disabled by default.
